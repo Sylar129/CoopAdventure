@@ -24,5 +24,11 @@ public:
 
 	virtual void Deinitialize() override;
 
+	UFUNCTION(BlueprintCallable)
+	void CreateServer(const FString& ServerName);
+
+	UFUNCTION(BlueprintCallable)
+	void FindServer(const FString& ServerName);
+
 	IOnlineSessionPtr SessionInterface;
 };
