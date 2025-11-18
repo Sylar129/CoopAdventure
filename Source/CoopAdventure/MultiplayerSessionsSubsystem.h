@@ -30,5 +30,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FindServer(const FString& ServerName);
 
+	void OnCreateSessionComplete(FName SessionName, bool WasSuccessful);
+
 	IOnlineSessionPtr SessionInterface;
 };
