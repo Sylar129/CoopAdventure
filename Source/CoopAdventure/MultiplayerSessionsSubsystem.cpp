@@ -4,7 +4,7 @@
 
 #include "OnlineSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "OnlineSessionSettings.h"
+#include "Online/OnlineSessionNames.h"
 
 void PrintString(const FString& Str)
 {
@@ -33,6 +33,7 @@ void UMultiplayerSessionsSubsystem::Initialize(FSubsystemCollectionBase& Collect
 		PrintString("Session Interface is valid");
 		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnCreateSessionComplete);
 		SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnDestroySessionComplete);
+		SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnFindSessionsComplete);
 	}
 }
 
@@ -77,6 +78,17 @@ void UMultiplayerSessionsSubsystem::CreateServer(const FString& ServerName)
 void UMultiplayerSessionsSubsystem::FindServer(const FString& ServerName)
 {
 	PrintString("Find Server");
+	if (ServerName.IsEmpty())
+	{
+		PrintString("Server Name cannot be empty!");
+		return;
+	}
+
+	SessionSearch = MakeShared<FOnlineSessionSearch>();
+	SessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
+	SessionSearch->MaxSearchResults = 9999;
+	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool WasSuccessful)
@@ -96,4 +108,14 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 		CreateServerAfterDestroy = false;
 		CreateServer(DestroyServerName);
 	}
+}
+
+void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool WasSuccessful)
+{
+	PrintString(FString::Printf(TEXT("OnFindSessionsComplete: %d"), WasSuccessful));
+	if (!WasSuccessful)
+	{
+		return;
+	}
+	PrintString(FString::Printf(TEXT("find %d sessions"), SessionSearch->SearchResults.Num()));
 }
