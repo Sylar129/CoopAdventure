@@ -39,5 +39,6 @@ public:
 
 	bool							 CreateServerAfterDestroy;
 	FString							 DestroyServerName;
+	FString							 ServerNameToFind;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 };
