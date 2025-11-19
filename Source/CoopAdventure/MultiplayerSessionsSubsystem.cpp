@@ -50,6 +50,7 @@ void UMultiplayerSessionsSubsystem::CreateServer(const FString& ServerName)
 	if (ServerName.IsEmpty())
 	{
 		PrintString("Server Name cannot be empty!");
+		ServerCreateDel.Broadcast(false);
 		return;
 	}
 	FName SessionName("Co-op Adventure Session Name");
@@ -85,6 +86,7 @@ void UMultiplayerSessionsSubsystem::FindServer(const FString& ServerName)
 	if (ServerName.IsEmpty())
 	{
 		PrintString("Server Name cannot be empty!");
+		ServerJoinDel.Broadcast(false);
 		return;
 	}
 	ServerNameToFind = ServerName;
@@ -98,6 +100,7 @@ void UMultiplayerSessionsSubsystem::FindServer(const FString& ServerName)
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool WasSuccessful)
 {
 	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), WasSuccessful));
+	ServerCreateDel.Broadcast(WasSuccessful);
 	if (WasSuccessful)
 	{
 		GetWorld()->ServerTravel("/Game/ThirdPerson/Lvl_ThirdPerson?Listen");
@@ -117,6 +120,7 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 {
 	PrintString(FString::Printf(TEXT("OnFindSessionsComplete: %d"), WasSuccessful));
+	ServerJoinDel.Broadcast(WasSuccessful);
 	if (!WasSuccessful || ServerNameToFind.IsEmpty())
 	{
 		return;
@@ -144,17 +148,20 @@ void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 	{
 		PrintString("Join session");
 		SessionInterface->JoinSession(0, MySessionName, *CorrectResult);
+		ServerJoinDel.Broadcast(false);
 	}
 	else
 	{
 		PrintString("Couldn't find the server");
 		ServerNameToFind = "";
+		ServerJoinDel.Broadcast(false);
 	}
 }
 
 void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
 	PrintString(FString::Printf(TEXT("OnJoinSessionComplete: %d"), (int)Result));
+	ServerJoinDel.Broadcast(Result == EOnJoinSessionCompleteResult::Success);
 
 	if (Result == EOnJoinSessionCompleteResult::Success)
 	{

@@ -10,9 +10,9 @@
 
 #include "MultiplayerSessionsSubsystem.generated.h"
 
-/**
- *
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerCreateDelegate, bool, WasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerJoinDelegate, bool, WasSuccessful);
+
 UCLASS()
 class COOPADVENTURE_API UMultiplayerSessionsSubsystem : public UGameInstanceSubsystem
 {
@@ -43,4 +43,10 @@ public:
 	FString							 DestroyServerName;
 	FString							 ServerNameToFind;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
+
+	UPROPERTY(BlueprintAssignable)
+	FServerCreateDelegate ServerCreateDel;
+
+	UPROPERTY(BlueprintAssignable)
+	FServerJoinDelegate ServerJoinDel;
 };
