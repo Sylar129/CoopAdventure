@@ -35,6 +35,7 @@ void UMultiplayerSessionsSubsystem::Initialize(FSubsystemCollectionBase& Collect
 		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnCreateSessionComplete);
 		SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnDestroySessionComplete);
 		SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnFindSessionsComplete);
+		SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionsSubsystem::OnJoinSessionComplete);
 	}
 }
 
@@ -116,11 +117,13 @@ void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, 
 void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 {
 	PrintString(FString::Printf(TEXT("OnFindSessionsComplete: %d"), WasSuccessful));
-	if (!WasSuccessful)
+	if (!WasSuccessful || ServerNameToFind.IsEmpty())
 	{
 		return;
 	}
 	PrintString(FString::Printf(TEXT("find %d sessions"), SessionSearch->SearchResults.Num()));
+
+	const FOnlineSessionSearchResult* CorrectResult = nullptr;
 	for (const auto& Result : SessionSearch->SearchResults)
 	{
 		if (Result.IsValid())
@@ -128,6 +131,43 @@ void UMultiplayerSessionsSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 			FString ServerName = "No-name";
 			Result.Session.SessionSettings.Get(FName("SERVER_NAME"), ServerName);
 			PrintString(FString::Printf(TEXT("Server Name: %s"), *ServerName));
+
+			if (ServerName == ServerNameToFind)
+			{
+				CorrectResult = &Result;
+				break;
+			}
+		}
+	}
+
+	if (CorrectResult)
+	{
+		PrintString("Join session");
+		SessionInterface->JoinSession(0, MySessionName, *CorrectResult);
+	}
+	else
+	{
+		PrintString("Couldn't find the server");
+		ServerNameToFind = "";
+	}
+}
+
+void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	PrintString(FString::Printf(TEXT("OnJoinSessionComplete: %d"), (int)Result));
+
+	if (Result == EOnJoinSessionCompleteResult::Success)
+	{
+		FString Address = "";
+		bool	Success = SessionInterface->GetResolvedConnectString(SessionName, Address);
+		if (Success)
+		{
+			PrintString(FString::Printf(TEXT("Address: %s"), *Address));
+			GetGameInstance()->GetFirstLocalPlayerController()->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+		}
+		else
+		{
+			PrintString("GetResolvedConnectString return false");
 		}
 	}
 }
