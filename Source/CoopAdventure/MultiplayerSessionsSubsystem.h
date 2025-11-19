@@ -31,6 +31,10 @@ public:
 	void FindServer(const FString& ServerName);
 
 	void OnCreateSessionComplete(FName SessionName, bool WasSuccessful);
+	void OnDestroySessionComplete(FName SessionName, bool WasSuccessful);
 
 	IOnlineSessionPtr SessionInterface;
+
+	bool	CreateServerAfterDestroy;
+	FString DestroyServerName;
 };
