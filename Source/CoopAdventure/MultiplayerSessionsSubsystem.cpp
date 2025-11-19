@@ -46,7 +46,16 @@ void UMultiplayerSessionsSubsystem::CreateServer(const FString& ServerName)
 		PrintString("Server Name cannot be empty!");
 		return;
 	}
-	FName				   SessionName("Co-op Adventure Session Name");
+	FName SessionName("Co-op Adventure Session Name");
+
+	FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(SessionName);
+	if (ExistingSession)
+	{
+		PrintString("Session already exist, destroying it");
+		SessionInterface->DestroySession(SessionName);
+		return;
+	}
+
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
 	SessionSettings.bIsDedicated = false;
