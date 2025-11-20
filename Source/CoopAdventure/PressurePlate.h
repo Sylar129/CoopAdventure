@@ -30,7 +30,7 @@ public:
 	USceneComponent* RootComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* TriggerShape;
+	UStaticMeshComponent* TriggerMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
