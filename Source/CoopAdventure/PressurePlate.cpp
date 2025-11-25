@@ -82,7 +82,6 @@ void APressurePlate::Tick(float DeltaTime)
 		{
 			if (Activated)
 			{
-
 				Activated = false;
 				OnDeactivated.Broadcast();
 			}
