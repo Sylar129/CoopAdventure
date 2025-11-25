@@ -9,6 +9,10 @@
 
 #include "PressurePlate.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressurePlateOnActivated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressurePlateOnDeactivated);
+
+
 UCLASS()
 class COOPADVENTURE_API APressurePlate : public AActor
 {
@@ -37,4 +41,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Activated;
+
+	UPROPERTY(BlueprintAssignable)
+	FPressurePlateOnActivated OnActivated;
+
+	UPROPERTY(BlueprintAssignable)
+	FPressurePlateOnDeactivated OnDeactivated;
 };

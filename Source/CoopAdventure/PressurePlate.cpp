@@ -70,6 +70,22 @@ void APressurePlate::Tick(float DeltaTime)
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor::White, Msg);
 		}
 
-		Activated = TriggerActor != nullptr;
+		if (TriggerActor)
+		{
+			if (!Activated)
+			{
+				Activated = true;
+				OnActivated.Broadcast();
+			}
+		}
+		else
+		{
+			if (Activated)
+			{
+
+				Activated = false;
+				OnDeactivated.Broadcast();
+			}
+		}
 	}
 }
