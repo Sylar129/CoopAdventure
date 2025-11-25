@@ -52,4 +52,24 @@ void APressurePlate::BeginPlay()
 void APressurePlate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (HasAuthority())
+	{
+		TArray<AActor*> OverlappingActors;
+		TriggerMesh->GetOverlappingActors(OverlappingActors);
+		AActor* TriggerActor = nullptr;
+
+		for (AActor* A : OverlappingActors)
+		{
+			if (A->ActorHasTag("TriggerActor"))
+			{
+				TriggerActor = A;
+				break;
+			}
+			// FString Msg = FString::Printf(TEXT("Name: %s"), *A->GetName());
+			// GEngine->AddOnScreenDebugMessage(-1, 1.0, FColor::White, Msg);
+		}
+
+		Activated = TriggerActor != nullptr;
+	}
 }
