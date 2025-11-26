@@ -35,7 +35,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	bool AllTriggerActorsTriggered;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetPoints(const FVector& Start, const FVector& End);
 
 	UFUNCTION()
