@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Actor.h"
 #include "CollectableKey.generated.h"
@@ -40,4 +41,10 @@ public:
 
 	UFUNCTION()
 	void OnRep_IsCollected();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float RotationSpeed;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	UAudioComponent* CollectAudio;
 };
