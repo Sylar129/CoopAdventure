@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CollectableKeyHolder.h"
 #include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Actor.h"
@@ -47,4 +48,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	UAudioComponent* CollectAudio;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ACollectableKeyHolder* Holder;
 };
