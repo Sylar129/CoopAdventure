@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Transporter.h"
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -38,6 +39,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UTransporter* Transporter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Activated;
